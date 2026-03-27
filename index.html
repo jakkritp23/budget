@@ -6,654 +6,674 @@
     <title>IT Budget Dashboard 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f1117;
-            --surface: #181b24;
-            --surface2: #1f2333;
-            --border: rgba(255,255,255,0.07);
-            --accent: #4f8ef7;
-            --accent2: #7c5cfc;
-            --danger: #f25c7a;
-            --success: #2dd9a0;
-            --warning: #f5a623;
-            --text: #e8eaf0;
-            --muted: #6b7280;
-            --inno: #4f8ef7;
-            --infra: #a78bfa;
+            --bg:        #f0f4f9;
+            --surface:   #ffffff;
+            --surface2:  #f7f9fc;
+            --surface3:  #eef1f7;
+            --border:    #e2e8f0;
+            --border2:   #cbd5e1;
+            --accent:    #2563eb;
+            --accent-lt: #dbeafe;
+            --accent2:   #0ea5e9;
+            --danger:    #e11d48;
+            --danger-lt: #ffe4e6;
+            --success:   #059669;
+            --success-lt:#d1fae5;
+            --text:      #0f172a;
+            --text2:     #334155;
+            --muted:     #64748b;
+            --muted2:    #94a3b8;
+            --inno-bg:   #eff6ff;
+            --inno-fg:   #1d4ed8;
+            --infra-bg:  #f0fdf4;
+            --infra-fg:  #166534;
+            --shadow-sm: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+            --shadow-md: 0 4px 16px rgba(15,23,42,0.08), 0 1px 4px rgba(15,23,42,0.04);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Kanit', sans-serif;
-            background-color: var(--bg);
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            padding: 24px 20px;
+            padding: 28px 20px 48px;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 32px 32px;
         }
 
-        /* === HEADER === */
-        .header {
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* TOPBAR */
+        .topbar {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 20px;
+            gap: 16px;
             margin-bottom: 28px;
             flex-wrap: wrap;
         }
 
-        .header-left h1 {
-            font-size: 1.8rem;
+        .brand { display: flex; align-items: center; gap: 14px; }
+
+        .brand-icon {
+            width: 46px; height: 46px;
+            border-radius: 13px;
+            background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.30);
+            flex-shrink: 0;
+        }
+
+        .brand-text h1 {
+            font-size: 1.35rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #fff 40%, var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.4px;
+            color: var(--text);
         }
 
-        .header-left p {
+        .brand-text p {
+            font-size: 0.75rem;
             color: var(--muted);
-            font-size: 0.82rem;
-            margin-top: 4px;
+            margin-top: 3px;
+            display: flex; align-items: center; gap: 6px;
         }
 
-        .header-right {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+        .live-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            display: inline-block;
+            animation: pulse 2s infinite;
         }
 
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        @keyframes pulse {
+            0%,100% { opacity:1; transform:scale(1); }
+            50%      { opacity:0.4; transform:scale(1.5); }
         }
 
-        .filter-group label {
-            font-size: 0.68rem;
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+        .filter-group { display: flex; flex-direction: column; gap: 4px; }
+
+        .filter-label {
+            font-size: 0.65rem;
             font-weight: 600;
-            letter-spacing: 0.08em;
-            color: var(--muted);
+            letter-spacing: 0.09em;
             text-transform: uppercase;
+            color: var(--muted);
         }
 
         .filter-group select {
-            padding: 9px 14px;
+            padding: 9px 34px 9px 12px;
             border-radius: 10px;
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border2);
             background: var(--surface);
             color: var(--text);
-            font-family: 'Kanit', sans-serif;
-            font-size: 0.88rem;
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            font-size: 0.84rem;
+            font-weight: 500;
             cursor: pointer;
             outline: none;
-            transition: border-color 0.2s;
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.18s, box-shadow 0.18s;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 36px;
+            background-position: right 11px center;
         }
 
-        .filter-group select:focus { border-color: var(--accent); }
+        .filter-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+        }
 
         #budgetType { color: var(--accent); font-weight: 600; }
 
-        /* === KPI CARDS === */
+        /* KPI */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 14px;
+            margin-bottom: 18px;
         }
 
-        @media (max-width: 600px) {
-            .kpi-grid { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 580px) { .kpi-grid { grid-template-columns: 1fr; } }
 
         .kpi-card {
             background: var(--surface);
-            border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 20px 22px;
+            padding: 20px 22px 18px;
+            border: 1.5px solid var(--border);
+            box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s;
+            transition: box-shadow 0.2s, transform 0.2s;
+            animation: slideUp 0.4s ease both;
         }
 
-        .kpi-card::before {
+        .kpi-card:nth-child(1) { animation-delay: 0.04s; }
+        .kpi-card:nth-child(2) { animation-delay: 0.10s; }
+        .kpi-card:nth-child(3) { animation-delay: 0.16s; }
+        .kpi-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+        .kpi-card::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
+            bottom: 0; left: 0; right: 0;
             height: 3px;
+            border-radius: 0 0 14px 14px;
         }
 
-        .kpi-card.total::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-        .kpi-card.spent::before { background: var(--danger); }
-        .kpi-card.remain::before { background: var(--success); }
+        .kpi-card.total::after  { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+        .kpi-card.spent::after  { background: var(--danger); }
+        .kpi-card.remain::after { background: var(--success); }
+
+        .kpi-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
 
         .kpi-label {
             font-size: 0.7rem;
             font-weight: 600;
-            letter-spacing: 0.08em;
-            color: var(--muted);
+            letter-spacing: 0.07em;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            color: var(--muted);
         }
+
+        .kpi-badge {
+            font-size: 1rem;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .kpi-card.total  .kpi-badge { background: var(--accent-lt); }
+        .kpi-card.spent  .kpi-badge { background: var(--danger-lt); }
+        .kpi-card.remain .kpi-badge { background: var(--success-lt); }
 
         .kpi-value {
-            font-size: 1.55rem;
+            font-size: 1.6rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            transition: all 0.4s;
+            letter-spacing: -0.8px;
+            line-height: 1;
+            font-family: 'IBM Plex Mono', monospace;
         }
 
-        .kpi-card.total .kpi-value { color: var(--accent); }
-        .kpi-card.spent .kpi-value { color: var(--danger); }
+        .kpi-card.total  .kpi-value { color: var(--accent); }
+        .kpi-card.spent  .kpi-value { color: var(--danger); }
         .kpi-card.remain .kpi-value { color: var(--success); }
 
-        .kpi-unit { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+        .kpi-unit { font-size: 0.7rem; color: var(--muted2); margin-top: 5px; }
 
-        .kpi-icon {
-            position: absolute;
-            right: 18px; top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.8rem;
-            opacity: 0.12;
-        }
-
-        /* === USAGE BAR (Overall) === */
-        .usage-bar-card {
+        /* USAGE BAR */
+        .usage-card {
             background: var(--surface);
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border);
             border-radius: 16px;
-            padding: 20px 24px;
-            margin-bottom: 24px;
-        }
-
-        .usage-bar-header {
+            padding: 18px 22px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow-sm);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            gap: 24px;
+            flex-wrap: wrap;
         }
 
-        .usage-bar-label { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-        .usage-pct { font-size: 1rem; font-weight: 700; color: var(--text); }
+        .usage-label-block { flex-shrink: 0; }
+
+        .usage-title {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .usage-pct-big {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text);
+            line-height: 1.1;
+            margin-top: 3px;
+        }
+
+        .usage-bar-wrap { flex: 1; min-width: 180px; }
 
         .bar-track {
             width: 100%;
-            height: 12px;
-            background: var(--surface2);
+            height: 10px;
+            background: var(--surface3);
             border-radius: 99px;
+            border: 1px solid var(--border);
             overflow: hidden;
         }
 
         .bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--danger), #ff8a65);
+            background: linear-gradient(90deg, var(--danger) 0%, #fb7185 100%);
             border-radius: 99px;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.85s cubic-bezier(0.4,0,0.2,1);
             width: 0%;
         }
 
-        /* === CHART === */
+        .bar-legend {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 7px;
+            font-size: 0.7rem;
+            color: var(--muted2);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        /* CHART */
         .chart-card {
             background: var(--surface);
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border);
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
+            padding: 22px 24px 20px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow-sm);
         }
 
-        .chart-title {
-            font-size: 0.78rem;
+        .card-heading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .card-heading-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .card-heading-text {
+            font-size: 0.75rem;
             font-weight: 600;
-            color: var(--muted);
-            text-transform: uppercase;
             letter-spacing: 0.07em;
-            margin-bottom: 16px;
+            text-transform: uppercase;
+            color: var(--muted);
         }
 
-        .chart-wrap {
-            position: relative;
-            height: 380px;
-        }
+        .chart-wrap { position: relative; height: 360px; }
 
-        /* === TABLE === */
+        /* TABLE */
         .table-card {
             background: var(--surface);
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border);
             border-radius: 16px;
             overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
 
-        .table-header-row {
+        .table-topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
+            padding: 15px 22px;
+            border-bottom: 1.5px solid var(--border);
+            background: var(--surface2);
         }
 
-        .table-title {
-            font-size: 0.78rem;
+        .table-topbar-left { display: flex; align-items: center; gap: 10px; }
+
+        .table-count-pill {
+            font-size: 0.68rem;
             font-weight: 600;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.07em;
-        }
-
-        .table-count {
-            font-size: 0.75rem;
             padding: 3px 10px;
             border-radius: 99px;
-            background: var(--surface2);
-            color: var(--muted);
+            background: var(--accent-lt);
+            color: var(--accent);
         }
 
         .table-wrap { overflow-x: auto; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.84rem;
-        }
-
-        thead tr {
-            background: var(--surface2);
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
 
         thead th {
-            padding: 11px 16px;
-            font-size: 0.68rem;
+            padding: 10px 16px;
+            font-size: 0.66rem;
             font-weight: 600;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.09em;
             text-transform: uppercase;
             color: var(--muted);
+            background: var(--surface2);
+            border-bottom: 1.5px solid var(--border);
             text-align: left;
+            white-space: nowrap;
         }
 
-        thead th:not(:first-child):not(:nth-child(2)) { text-align: right; }
+        thead th.r { text-align: right; }
 
         tbody tr {
             border-bottom: 1px solid var(--border);
-            transition: background 0.15s;
+            transition: background 0.12s;
         }
 
         tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: var(--surface2); }
+        tbody tr:hover { background: #f0f7ff; }
 
-        td { padding: 12px 16px; vertical-align: middle; }
+        td { padding: 11px 16px; vertical-align: middle; }
 
         .dept-badge {
             display: inline-block;
-            padding: 3px 10px;
+            padding: 3px 9px;
             border-radius: 6px;
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             font-weight: 700;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
         }
 
-        .dept-inno { background: rgba(79,142,247,0.15); color: var(--inno); }
-        .dept-infra { background: rgba(167,139,250,0.15); color: var(--infra); }
+        .dept-inno  { background: var(--inno-bg);  color: var(--inno-fg); }
+        .dept-infra { background: var(--infra-bg); color: var(--infra-fg); }
 
-        .project-name { color: var(--text); font-weight: 500; }
+        .project-name { color: var(--text2); font-weight: 500; line-height: 1.3; }
 
-        .mono { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
-        .text-right { text-align: right; }
-        .text-danger { color: var(--danger); }
-        .text-success { color: var(--success); font-weight: 600; }
-        .text-muted { color: var(--muted); }
+        .mono { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+        .tr  { text-align: right; }
+        .c-danger  { color: var(--danger); }
+        .c-success { color: var(--success); font-weight: 600; }
+        .c-muted   { color: var(--muted2); }
 
-        /* Mini progress in table */
-        .mini-progress-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: flex-end;
-        }
+        .mpw { display: flex; align-items: center; gap: 7px; justify-content: flex-end; }
+        .mbar { width: 56px; height: 5px; background: var(--surface3); border-radius: 99px; overflow: hidden; border: 1px solid var(--border); }
+        .mfill { height: 100%; border-radius: 99px; }
+        .mpct { font-size: 0.69rem; min-width: 36px; text-align: right; font-family: 'IBM Plex Mono', monospace; }
 
-        .mini-bar {
-            width: 60px;
-            height: 5px;
-            background: var(--surface2);
-            border-radius: 99px;
-            overflow: hidden;
-        }
+        .empty-row td { text-align: center; padding: 36px; color: var(--muted2); font-size: 0.85rem; }
 
-        .mini-fill {
-            height: 100%;
-            border-radius: 99px;
-            background: var(--danger);
-            transition: width 0.5s ease;
-        }
-
-        .mini-pct { font-size: 0.72rem; color: var(--muted); min-width: 32px; text-align: right; }
-
-        /* Animate number counting */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .kpi-card { animation: fadeInUp 0.4s ease both; }
-        .kpi-card:nth-child(1) { animation-delay: 0.05s; }
-        .kpi-card:nth-child(2) { animation-delay: 0.1s; }
-        .kpi-card:nth-child(3) { animation-delay: 0.15s; }
-
-        /* Empty state */
-        .empty-row td {
-            text-align: center;
-            padding: 32px;
-            color: var(--muted);
-            font-size: 0.85rem;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <div style="max-width:1200px; margin:0 auto;">
+<div class="container">
 
-        <!-- HEADER -->
-        <div class="header">
-            <div class="header-left">
+    <div class="topbar">
+        <div class="brand">
+            <div class="brand-icon">💻</div>
+            <div class="brand-text">
                 <h1 id="mainTitle">IT CAPEX 2026</h1>
-                <p id="subTitle">งบประมาณรายโครงการ · อัปเดตล่าสุด มีนาคม 2026</p>
-            </div>
-            <div class="header-right">
-                <div class="filter-group">
-                    <label>ประเภทงบประมาณ</label>
-                    <select id="budgetType" onchange="updateDashboard()">
-                        <option value="CAPEX">CAPEX (รายโครงการ)</option>
-                        <option value="OPEX">OPEX (ค่าใช้จ่าย)</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>ฝ่าย</label>
-                    <select id="deptFilter" onchange="updateDashboard()">
-                        <option value="ALL">สรุปทุกฝ่าย</option>
-                        <option value="INNO">Innovation</option>
-                        <option value="INFRA">Infrastructure</option>
-                    </select>
-                </div>
+                <p><span class="live-dot"></span><span id="subTitle">งบประมาณรายโครงการ · มีนาคม 2026</span></p>
             </div>
         </div>
-
-        <!-- KPI CARDS -->
-        <div class="kpi-grid">
-            <div class="kpi-card total">
-                <div class="kpi-label">งบประมาณทั้งหมด</div>
-                <div id="sumG" class="kpi-value">0</div>
-                <div class="kpi-unit">บาท</div>
-                <div class="kpi-icon">💰</div>
+        <div class="filters">
+            <div class="filter-group">
+                <span class="filter-label">ประเภทงบประมาณ</span>
+                <select id="budgetType" onchange="updateDashboard()">
+                    <option value="CAPEX">CAPEX (รายโครงการ)</option>
+                    <option value="OPEX">OPEX (ค่าใช้จ่าย)</option>
+                </select>
             </div>
-            <div class="kpi-card spent">
-                <div class="kpi-label">ใช้ไปแล้ว</div>
-                <div id="sumH" class="kpi-value">0</div>
-                <div class="kpi-unit">บาท</div>
-                <div class="kpi-icon">📤</div>
-            </div>
-            <div class="kpi-card remain">
-                <div class="kpi-label">งบประมาณคงเหลือ</div>
-                <div id="sumI" class="kpi-value">0</div>
-                <div class="kpi-unit">บาท</div>
-                <div class="kpi-icon">✅</div>
+            <div class="filter-group">
+                <span class="filter-label">ฝ่าย</span>
+                <select id="deptFilter" onchange="updateDashboard()">
+                    <option value="ALL">ทุกฝ่าย</option>
+                    <option value="INNO">Innovation</option>
+                    <option value="INFRA">Infrastructure</option>
+                </select>
             </div>
         </div>
-
-        <!-- OVERALL USAGE BAR -->
-        <div class="usage-bar-card">
-            <div class="usage-bar-header">
-                <span class="usage-bar-label">อัตราการใช้งบประมาณโดยรวม</span>
-                <span id="usagePct" class="usage-pct">0%</span>
-            </div>
-            <div class="bar-track">
-                <div id="usageBar" class="bar-fill"></div>
-            </div>
-        </div>
-
-        <!-- CHART -->
-        <div class="chart-card">
-            <div class="chart-title">งบประมาณรายโครงการ (บาท)</div>
-            <div class="chart-wrap">
-                <canvas id="budgetChart"></canvas>
-            </div>
-        </div>
-
-        <!-- TABLE -->
-        <div class="table-card">
-            <div class="table-header-row">
-                <span class="table-title">รายละเอียดงบประมาณ</span>
-                <span id="rowCount" class="table-count">0 รายการ</span>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ฝ่าย</th>
-                            <th>ชื่อโครงการ / รายการ</th>
-                            <th>งบประมาณ</th>
-                            <th>ใช้ไป</th>
-                            <th>ใช้ไป (%)</th>
-                            <th>คงเหลือ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
     </div>
 
-    <script>
-        Chart.register(ChartDataLabels);
+    <div class="kpi-grid">
+        <div class="kpi-card total">
+            <div class="kpi-top"><span class="kpi-label">งบประมาณทั้งหมด</span><span class="kpi-badge">💰</span></div>
+            <div id="sumG" class="kpi-value">0</div>
+            <div class="kpi-unit">บาท (THB)</div>
+        </div>
+        <div class="kpi-card spent">
+            <div class="kpi-top"><span class="kpi-label">ใช้ไปแล้ว</span><span class="kpi-badge">📤</span></div>
+            <div id="sumH" class="kpi-value">0</div>
+            <div class="kpi-unit">บาท (THB)</div>
+        </div>
+        <div class="kpi-card remain">
+            <div class="kpi-top"><span class="kpi-label">งบประมาณคงเหลือ</span><span class="kpi-badge">✅</span></div>
+            <div id="sumI" class="kpi-value">0</div>
+            <div class="kpi-unit">บาท (THB)</div>
+        </div>
+    </div>
 
-        const allData = {
-            CAPEX: [
-                { dept: "INNO", name: "ERP Phase Revamp & BC Phase II", g: 9000000, h: 0 },
-                { dept: "INNO", name: "AUCTLive System Phase II", g: 7000000, h: 0 },
-                { dept: "INNO", name: "2025-AUCTBid System (New)", g: 500000, h: 0 },
-                { dept: "INNO", name: "Greenbook Data Analytics", g: 1000000, h: 0 },
-                { dept: "INNO", name: "Mobile App Phase III", g: 200000, h: 0 },
-                { dept: "INNO", name: "Data Warehouse System", g: 1500000, h: 0 },
-                { dept: "INNO", name: "Queue & Self Service Kios", g: 650000, h: 0 },
-                { dept: "INNO", name: "Other System", g: 300000, h: 0 },
-                { dept: "INNO", name: "พัฒนาระบบ CRM Phase", g: 1000000, h: 0 },
-                { dept: "INNO", name: "พัฒนาระบบ Automation & AI", g: 500000, h: 0 },
-                { dept: "INNO", name: "พัฒนาระบบ Central Monitoring", g: 500000, h: 0 },
-                { dept: "INFRA", name: "Computer", g: 1000000, h: 121400 },
-                { dept: "INFRA", name: "Accessories", g: 800000, h: 7477 },
-                { dept: "INFRA", name: "Mobile and Tablet", g: 1000000, h: 1115 },
-                { dept: "INFRA", name: "Network", g: 700000, h: 100130 },
-                { dept: "INFRA", name: "Software", g: 450000, h: 0 },
-                { dept: "INFRA", name: "Cyber Securities", g: 1000000, h: 0 },
-                { dept: "INFRA", name: "CCTV", g: 5000000, h: 374292 }
-            ],
-            OPEX: [
-                { dept: "INNO", name: "New ERP Cloud Server", g: 1200000, h: 0 },
-                { dept: "INNO", name: "MA Support Web", g: 360000, h: 0 },
-                { dept: "INNO", name: "MA Support BC", g: 480000, h: 0 },
-                { dept: "INNO", name: "Microsoft Dynamic BC (BREP)", g: 750000, h: 0 },
-                { dept: "INNO", name: "E-Auction System (New)", g: 600000, h: 0 },
-                { dept: "INNO", name: "Cloud Server (Mobile App)", g: 240000, h: 0 },
-                { dept: "INNO", name: "ค่าบริการ MA (Software)", g: 420000, h: 0 },
-                { dept: "INNO", name: "ค่าบริการ MA (Server)", g: 300000, h: 0 },
-                { dept: "INFRA", name: "Internet", g: 1800000, h: 216000 },
-                { dept: "INFRA", name: "Software (Subscription)", g: 2895304, h: 0 },
-                { dept: "INFRA", name: "Cyber Securities", g: 150000, h: 0 },
-                { dept: "INFRA", name: "CCTV", g: 25000, h: 0 },
-                { dept: "INFRA", name: "Maintenance", g: 100000, h: 0 }
-            ]
-        };
+    <div class="usage-card">
+        <div class="usage-label-block">
+            <div class="usage-title">การใช้งบโดยรวม</div>
+            <div id="usagePct" class="usage-pct-big">0%</div>
+        </div>
+        <div class="usage-bar-wrap">
+            <div class="bar-track"><div id="usageBar" class="bar-fill"></div></div>
+            <div class="bar-legend">
+                <span id="spentLabel">ใช้ไป: 0 บาท</span>
+                <span id="totalLabel">งบรวม: 0 บาท</span>
+            </div>
+        </div>
+    </div>
 
-        let myChart;
+    <div class="chart-card">
+        <div class="card-heading">
+            <div class="card-heading-dot"></div>
+            <span class="card-heading-text">งบประมาณรายโครงการ / รายการ (บาท)</span>
+        </div>
+        <div class="chart-wrap"><canvas id="budgetChart"></canvas></div>
+    </div>
 
-        function fmt(n) {
-            if (n >= 1000000) return (n / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'M';
-            if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.?0+$/, '') + 'K';
-            return n.toLocaleString();
-        }
+    <div class="table-card">
+        <div class="table-topbar">
+            <div class="table-topbar-left">
+                <div class="card-heading-dot"></div>
+                <span class="card-heading-text">รายละเอียดงบประมาณ</span>
+                <span id="rowCount" class="table-count-pill">0 รายการ</span>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ฝ่าย</th>
+                        <th>ชื่อโครงการ / รายการ</th>
+                        <th class="r">งบประมาณ</th>
+                        <th class="r">ใช้ไปแล้ว</th>
+                        <th class="r">ใช้ไป (%)</th>
+                        <th class="r">คงเหลือ</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
 
-        function fmtFull(n) {
-            return n.toLocaleString('th-TH');
-        }
+</div>
+<script>
+Chart.register(ChartDataLabels);
 
-        function animateCount(el, target) {
-            const duration = 600;
-            const start = performance.now();
-            const startVal = parseInt(el.dataset.current || '0');
-            function step(now) {
-                const p = Math.min((now - start) / duration, 1);
-                const ease = 1 - Math.pow(1 - p, 3);
-                const current = Math.round(startVal + (target - startVal) * ease);
-                el.textContent = fmtFull(current);
-                if (p < 1) requestAnimationFrame(step);
-                else el.dataset.current = target;
-            }
-            requestAnimationFrame(step);
-        }
+const allData = {
+    CAPEX: [
+        {dept:"INNO",  name:"ERP Phase Revamp & BC Phase II",    g:9000000, h:0      },
+        {dept:"INNO",  name:"AUCTLive System Phase II",           g:7000000, h:0      },
+        {dept:"INNO",  name:"2025-AUCTBid System (New)",          g:500000,  h:0      },
+        {dept:"INNO",  name:"Greenbook Data Analytics",           g:1000000, h:0      },
+        {dept:"INNO",  name:"Mobile App Phase III",               g:200000,  h:0      },
+        {dept:"INNO",  name:"Data Warehouse System",              g:1500000, h:0      },
+        {dept:"INNO",  name:"Queue & Self Service Kios",          g:650000,  h:0      },
+        {dept:"INNO",  name:"Other System",                       g:300000,  h:0      },
+        {dept:"INNO",  name:"พัฒนาระบบ CRM Phase",               g:1000000, h:0      },
+        {dept:"INNO",  name:"พัฒนาระบบ Automation & AI",         g:500000,  h:0      },
+        {dept:"INNO",  name:"พัฒนาระบบ Central Monitoring",      g:500000,  h:0      },
+        {dept:"INFRA", name:"Computer",                           g:1000000, h:121400 },
+        {dept:"INFRA", name:"Accessories",                        g:800000,  h:7477   },
+        {dept:"INFRA", name:"Mobile and Tablet",                  g:1000000, h:1115   },
+        {dept:"INFRA", name:"Network",                            g:700000,  h:100130 },
+        {dept:"INFRA", name:"Software",                           g:450000,  h:0      },
+        {dept:"INFRA", name:"Cyber Securities",                   g:1000000, h:0      },
+        {dept:"INFRA", name:"CCTV",                               g:5000000, h:374292 }
+    ],
+    OPEX: [
+        {dept:"INNO",  name:"New ERP Cloud Server",               g:1200000, h:0      },
+        {dept:"INNO",  name:"MA Support Web",                     g:360000,  h:0      },
+        {dept:"INNO",  name:"MA Support BC",                      g:480000,  h:0      },
+        {dept:"INNO",  name:"Microsoft Dynamic BC (BREP)",        g:750000,  h:0      },
+        {dept:"INNO",  name:"E-Auction System (New)",             g:600000,  h:0      },
+        {dept:"INNO",  name:"Cloud Server (Mobile App)",          g:240000,  h:0      },
+        {dept:"INNO",  name:"ค่าบริการ MA (Software)",           g:420000,  h:0      },
+        {dept:"INNO",  name:"ค่าบริการ MA (Server)",             g:300000,  h:0      },
+        {dept:"INFRA", name:"Internet",                           g:1800000, h:216000 },
+        {dept:"INFRA", name:"Software (Subscription)",            g:2895304, h:0      },
+        {dept:"INFRA", name:"Cyber Securities",                   g:150000,  h:0      },
+        {dept:"INFRA", name:"CCTV",                               g:25000,   h:0      },
+        {dept:"INFRA", name:"Maintenance",                        g:100000,  h:0      }
+    ]
+};
 
-        function updateDashboard() {
-            const type = document.getElementById('budgetType').value;
-            const filter = document.getElementById('deptFilter').value;
+let myChart;
+const fmtFull  = n => n.toLocaleString('th-TH');
+const fmtShort = n => n>=1e6 ? (n/1e6).toFixed(2).replace(/\.?0+$/,'')+'M' : n>=1e3 ? (n/1e3).toFixed(1).replace(/\.?0+$/,'')+'K' : n.toLocaleString();
 
-            document.getElementById('mainTitle').innerText = `IT ${type} 2026`;
-            document.getElementById('subTitle').innerText = type === 'CAPEX'
-                ? 'งบประมาณรายโครงการ · อัปเดตล่าสุด มีนาคม 2026'
-                : 'งบประมาณค่าใช้จ่ายดำเนินงาน · อัปเดตล่าสุด มีนาคม 2026';
+function animateCount(el, target) {
+    const dur=700, t0=performance.now(), from=parseInt(el.dataset.cur||'0');
+    const run = now => {
+        const p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,3);
+        el.textContent = fmtFull(Math.round(from+(target-from)*e));
+        if(p<1) requestAnimationFrame(run); else el.dataset.cur=target;
+    };
+    requestAnimationFrame(run);
+}
 
-            const currentData = allData[type].map(item => ({
-                ...item,
-                i: item.g - item.h,
-                pct: item.g > 0 ? (item.h / item.g * 100) : 0
-            }));
+function pctColor(p) {
+    return p >= 80 ? '#e11d48' : p >= 50 ? '#d97706' : '#059669';
+}
 
-            const filtered = filter === 'ALL' ? currentData : currentData.filter(d => d.dept.toUpperCase() === filter.toUpperCase());
+function updateDashboard() {
+    const type   = document.getElementById('budgetType').value;
+    const filter = document.getElementById('deptFilter').value;
 
-            const totalG = filtered.reduce((a, b) => a + b.g, 0);
-            const totalH = filtered.reduce((a, b) => a + b.h, 0);
-            const totalI = totalG - totalH;
-            const overallPct = totalG > 0 ? (totalH / totalG * 100) : 0;
+    document.getElementById('mainTitle').innerText = `IT ${type} 2026`;
+    document.getElementById('subTitle').innerText  = type==='CAPEX'
+        ? 'งบประมาณรายโครงการ · มีนาคม 2026'
+        : 'งบประมาณค่าใช้จ่ายดำเนินงาน · มีนาคม 2026';
 
-            animateCount(document.getElementById('sumG'), totalG);
-            animateCount(document.getElementById('sumH'), totalH);
-            animateCount(document.getElementById('sumI'), totalI);
+    const data = allData[type].map(d=>({...d, i:d.g-d.h, pct:d.g>0?d.h/d.g*100:0}));
+    const rows = filter==='ALL' ? data : data.filter(d=>d.dept.toUpperCase()===filter.toUpperCase());
 
-            document.getElementById('usagePct').textContent = overallPct.toFixed(1) + '%';
-            document.getElementById('usageBar').style.width = Math.min(overallPct, 100) + '%';
+    const tG=rows.reduce((a,b)=>a+b.g,0);
+    const tH=rows.reduce((a,b)=>a+b.h,0);
+    const tI=tG-tH;
+    const pct=tG>0?tH/tG*100:0;
 
-            document.getElementById('rowCount').textContent = filtered.length + ' รายการ';
+    animateCount(document.getElementById('sumG'),tG);
+    animateCount(document.getElementById('sumH'),tH);
+    animateCount(document.getElementById('sumI'),tI);
 
-            // Table
-            document.getElementById('tableBody').innerHTML = filtered.map(d => {
-                const pct = d.g > 0 ? Math.min(d.pct, 100) : 0;
-                const hasData = d.g > 0;
-                return `
-                <tr>
-                    <td>
-                        <span class="dept-badge ${d.dept.toUpperCase() === 'INNO' ? 'dept-inno' : 'dept-infra'}">
-                            ${d.dept}
-                        </span>
-                    </td>
-                    <td class="project-name">${d.name}</td>
-                    <td class="text-right mono">${hasData ? fmtFull(d.g) : '<span class="text-muted">—</span>'}</td>
-                    <td class="text-right mono text-danger">${d.h > 0 ? fmtFull(d.h) : '<span class="text-muted">—</span>'}</td>
-                    <td>
-                        <div class="mini-progress-wrap">
-                            <span class="mini-pct">${hasData ? pct.toFixed(1) + '%' : '—'}</span>
-                            <div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div>
-                        </div>
-                    </td>
-                    <td class="text-right mono text-success">${hasData ? fmtFull(d.i) : '<span class="text-muted">—</span>'}</td>
-                </tr>`;
-            }).join('') || `<tr class="empty-row"><td colspan="6">ไม่มีข้อมูลในฝ่ายนี้</td></tr>`;
+    document.getElementById('usagePct').textContent   = pct.toFixed(1)+'%';
+    document.getElementById('usageBar').style.width   = Math.min(pct,100)+'%';
+    document.getElementById('spentLabel').textContent = 'ใช้ไป: '+fmtFull(tH)+' บาท';
+    document.getElementById('totalLabel').textContent = 'งบรวม: '+fmtFull(tG)+' บาท';
+    document.getElementById('rowCount').textContent   = rows.length+' รายการ';
 
-            // Chart
-            const chartData = filtered.filter(d => d.g > 0);
-            if (myChart) myChart.destroy();
+    document.getElementById('tableBody').innerHTML = rows.length
+        ? rows.map(d => {
+            const p   = d.g>0 ? Math.min(d.pct,100) : 0;
+            const nd  = !d.g;
+            const col = pctColor(p);
+            return `<tr>
+                <td><span class="dept-badge ${d.dept==='INNO'?'dept-inno':'dept-infra'}">${d.dept}</span></td>
+                <td class="project-name">${d.name}</td>
+                <td class="tr mono">${nd?'<span class="c-muted">—</span>':fmtFull(d.g)}</td>
+                <td class="tr mono c-danger">${d.h>0?fmtFull(d.h):'<span class="c-muted">—</span>'}</td>
+                <td>
+                    <div class="mpw">
+                        <span class="mpct" style="color:${nd?'var(--muted2)':col}">${nd?'—':p.toFixed(1)+'%'}</span>
+                        <div class="mbar"><div class="mfill" style="width:${p}%; background:${col}"></div></div>
+                    </div>
+                </td>
+                <td class="tr mono c-success">${nd?'<span class="c-muted">—</span>':fmtFull(d.i)}</td>
+            </tr>`;
+        }).join('')
+        : `<tr class="empty-row"><td colspan="6">ไม่มีข้อมูลในฝ่ายนี้</td></tr>`;
 
-            myChart = new Chart(document.getElementById('budgetChart'), {
-                type: 'bar',
-                data: {
-                    labels: chartData.map(d => d.name.length > 22 ? d.name.slice(0, 22) + '…' : d.name),
-                    datasets: [
-                        {
-                            label: 'ใช้ไปแล้ว',
-                            data: chartData.map(d => d.h),
-                            backgroundColor: '#f25c7a',
-                            borderRadius: 4,
-                        },
-                        {
-                            label: 'คงเหลือ',
-                            data: chartData.map(d => d.i),
-                            backgroundColor: 'rgba(79,142,247,0.75)',
-                            borderRadius: 4,
-                        }
-                    ]
+    const cd = rows.filter(d=>d.g>0);
+    if(myChart) myChart.destroy();
+
+    myChart = new Chart(document.getElementById('budgetChart'),{
+        type:'bar',
+        data:{
+            labels: cd.map(d=>d.name.length>24?d.name.slice(0,24)+'…':d.name),
+            datasets:[
+                {
+                    label:'ใช้ไปแล้ว',
+                    data: cd.map(d=>d.h),
+                    backgroundColor:'#fca5a5',
+                    hoverBackgroundColor:'#e11d48',
+                    borderRadius:5, borderSkipped:false
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: { duration: 600, easing: 'easeInOutQuart' },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: '#9ca3af',
-                                font: { family: 'Kanit', size: 12 },
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                padding: 20
-                            }
-                        },
-                        datalabels: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: '#1f2333',
-                            borderColor: 'rgba(255,255,255,0.08)',
-                            borderWidth: 1,
-                            titleColor: '#e8eaf0',
-                            bodyColor: '#9ca3af',
-                            titleFont: { family: 'Kanit', size: 13 },
-                            bodyFont: { family: 'Kanit', size: 12 },
-                            padding: 12,
-                            callbacks: {
-                                label: ctx => ` ${ctx.dataset.label}: ${fmtFull(ctx.raw)} บาท`
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            stacked: true,
-                            grid: { display: false },
-                            ticks: {
-                                color: '#6b7280',
-                                font: { family: 'Kanit', size: 10 },
-                                maxRotation: 35,
-                                minRotation: 20
-                            },
-                            border: { color: 'rgba(255,255,255,0.07)' }
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: {
-                                color: '#6b7280',
-                                font: { family: 'Kanit', size: 11 },
-                                callback: v => fmt(v)
-                            },
-                            border: { color: 'transparent' }
-                        }
-                    }
+                {
+                    label:'คงเหลือ',
+                    data: cd.map(d=>d.i),
+                    backgroundColor:'#bfdbfe',
+                    hoverBackgroundColor:'#2563eb',
+                    borderRadius:5, borderSkipped:false
                 }
-            });
+            ]
+        },
+        options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            animation:{duration:650, easing:'easeInOutQuart'},
+            plugins:{
+                legend:{
+                    position:'top',
+                    labels:{
+                        color:'#64748b',
+                        font:{family:'IBM Plex Sans Thai', size:12},
+                        usePointStyle:true, pointStyle:'circle', padding:20
+                    }
+                },
+                datalabels:{display:false},
+                tooltip:{
+                    backgroundColor:'#ffffff',
+                    borderColor:'#e2e8f0',
+                    borderWidth:1.5,
+                    titleColor:'#0f172a',
+                    bodyColor:'#64748b',
+                    titleFont:{family:'IBM Plex Sans Thai', size:13, weight:'600'},
+                    bodyFont:{family:'IBM Plex Sans Thai', size:12},
+                    padding:14,
+                    callbacks:{ label: ctx => `  ${ctx.dataset.label}: ${fmtFull(ctx.raw)} บาท` }
+                }
+            },
+            scales:{
+                x:{
+                    stacked:true,
+                    grid:{display:false},
+                    border:{color:'#e2e8f0'},
+                    ticks:{color:'#94a3b8', font:{family:'IBM Plex Sans Thai', size:10}, maxRotation:35, minRotation:20}
+                },
+                y:{
+                    stacked:true,
+                    beginAtZero:true,
+                    grid:{color:'#f1f5f9', lineWidth:1},
+                    border:{color:'transparent'},
+                    ticks:{color:'#94a3b8', font:{family:'IBM Plex Mono', size:11}, callback:v=>fmtShort(v)}
+                }
+            }
         }
+    });
+}
 
-        updateDashboard();
-    </script>
+updateDashboard();
+</script>
 </body>
 </html>
