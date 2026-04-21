@@ -563,8 +563,8 @@ function updateDashboard() {
 
     document.getElementById('mainTitle').innerText = `IT ${type} 2026`;
     document.getElementById('subTitle').innerText  = type==='CAPEX'
-        ? 'งบประมาณรายโครงการ · มีนาคม 2026'
-        : 'งบประมาณค่าใช้จ่ายดำเนินงาน · มีนาคม 2026';
+        ? 'งบประมาณรายโครงการ · มกราคม - เมษายน 2026'
+        : 'งบประมาณค่าใช้จ่ายดำเนินงาน · มกราคม - เมษายน 2026';
 
     const data = allData[type].map(d=>({...d, i:d.g-d.h, pct:d.g>0?d.h/d.g*100:0}));
     const rows = filter==='ALL' ? data : data.filter(d=>d.dept.toUpperCase()===filter.toUpperCase());
